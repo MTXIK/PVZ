@@ -1,0 +1,180 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "gitlab.ozon.dev/gojhw1/pkg/gen;pb";
+
+// Сервис для работы с заказами
+service OrderRPCHandler {
+  // Создание нового заказа
+  rpc CreateOrder(CreateOrderRequest) returns (Order) {}
+  
+  // Получение информации о заказе по ID
+  rpc GetOrder(GetOrderRequest) returns (Order) {}
+  
+  // Возврат заказа курьеру
+  rpc ReturnToCourier(ReturnToCourierRequest) returns (ReturnToCourierResponse) {}
+  
+  // Обработка действий с заказами для указанного клиента
+  rpc ProcessCustomer(ProcessCustomerRequest) returns (ProcessCustomerResponse) {}
+  
+  // Получение списка заказов с курсорной пагинацией
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+  
+  // Получение списка возвращенных заказов с курсорной пагинацией
+  rpc ListReturns(ListReturnsRequest) returns (ListReturnsResponse) {}
+  
+  // Получение истории всех заказов
+  rpc OrderHistory(OrderHistoryRequest) returns (OrderHistoryResponse) {}
+  
+  // Загрузка заказов из файла
+  rpc AcceptOrdersFromFile(AcceptOrdersFromFileRequest) returns (AcceptOrdersFromFileResponse) {}
+  
+  // Очистка базы данных
+  rpc ClearDatabase(google.protobuf.Empty) returns (ClearDatabaseResponse) {}
+}
+
+// Состояние заказа
+enum OrderState {
+  ORDER_STATE_UNSPECIFIED = 0;
+  ORDER_STATE_ACCEPTED = 1;
+  ORDER_STATE_DELIVERED = 2;
+  ORDER_STATE_RETURNED = 3;
+}
+
+// Тип упаковки
+enum PackageType {
+  PACKAGE_TYPE_UNSPECIFIED = 0;
+  PACKAGE_TYPE_BAG = 1;
+  PACKAGE_TYPE_BOX = 2;
+  PACKAGE_TYPE_FILM = 3;
+}
+
+// Тип обертки
+enum WrapperType {
+  WRAPPER_TYPE_UNSPECIFIED = 0;
+  WRAPPER_TYPE_FILM = 1;
+}
+
+// Запрос на создание нового заказа
+message CreateOrderRequest {
+  int64 id = 1;
+  int64 customer_id = 2;
+  string deadline_at = 3;
+  double weight = 4;
+  double cost = 5;
+  PackageType package_type = 6;
+  WrapperType wrapper = 7;
+}
+
+// Модель заказа
+message Order {
+  int64 id = 1;
+  int64 customer_id = 2;
+  OrderState state = 3;
+  double weight = 4;
+  double cost = 5;
+  PackageType package_type = 6;
+  WrapperType wrapper = 7;
+  google.protobuf.Timestamp deadline_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp delivered_at = 10;
+  google.protobuf.Timestamp returned_at = 11;
+}
+
+// Запрос на получение информации о заказе по ID
+message GetOrderRequest {
+  int64 id = 1;
+}
+
+// Запрос на возврат заказа курьеру
+message ReturnToCourierRequest {
+  int64 id = 1;
+}
+
+// Ответ на запрос о возврате заказа курьеру
+message ReturnToCourierResponse {
+  string message = 1;
+}
+
+// Запрос на обработку действий с заказами для указанного клиента
+message ProcessCustomerRequest {
+  int64 customer_id = 1;
+  string action = 2; // "handout" или "return"
+  repeated int64 order_ids = 3;
+}
+
+// Результат обработки конкретного заказа
+message ProcessingResult {
+  int64 order_id = 1;
+  oneof result {
+    string message = 2;
+    string error = 3;
+  }
+  int32 status = 4;
+}
+
+// Ответ на запрос обработки действий с заказами
+message ProcessCustomerResponse {
+  repeated ProcessingResult results = 1;
+}
+
+// Запрос на получение списка заказов с курсорной пагинацией
+message ListOrdersRequest {
+  int64 cursor_id = 1;
+  int32 limit = 2;
+  int64 customer_id = 3;
+  bool filter_pvz = 4;
+  string search_term = 5;
+}
+
+// Ответ со списком заказов и курсорной пагинацией
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  bool has_more = 2;
+  int64 next_cursor = 3;
+}
+
+// Запрос на получение списка возвращенных заказов с курсорной пагинацией
+message ListReturnsRequest {
+  int64 cursor_id = 1;
+  int32 limit = 2;
+  string search_term = 3;
+}
+
+// Ответ со списком возвращенных заказов и курсорной пагинацией
+message ListReturnsResponse {
+  repeated Order returns = 1;
+  bool has_more = 2;
+  int64 next_cursor = 3;
+}
+
+// Запрос на получение истории всех заказов
+message OrderHistoryRequest {
+  string search_term = 1;
+}
+
+// Ответ с историей заказов
+message OrderHistoryResponse {
+  repeated Order orders = 1;
+  int32 total = 2;
+}
+
+// Запрос на загрузку заказов из файла
+message AcceptOrdersFromFileRequest {
+  bytes file_content = 1;
+  string filename = 2;
+}
+
+// Ответ на запрос загрузки заказов из файла
+message AcceptOrdersFromFileResponse {
+  string message = 1;
+}
+
+// Ответ на запрос очистки базы данных
+message ClearDatabaseResponse {
+  string message = 1;
+}

@@ -1,0 +1,6 @@
+{
+    "stdout_filters": [
+        "response",
+        "request"
+    ]
+}

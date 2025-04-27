@@ -1,0 +1,51 @@
+{
+    "database": {
+        "user": "postgres",
+        "password": "postgres",
+        "host": "localhost",
+        "port": "5432",
+        "name": "orders_db"
+    },
+    "server": {
+        "host": "127.0.0.1",
+        "port": "9000",
+        "read_timeout": 30,
+        "write_timeout": 30,
+        "idle_timeout": 10,
+        "shutdown_timeout": 10
+    },
+    "redis": {
+        "host": "localhost",
+        "port": "6379"
+    },
+    "cache_type": {
+        "name": "redis",
+        "order_key_prefix": "order:",
+        "history_key_prefix": "history",
+        "order_ttl": 1440,
+        "history_ttl": 10,
+        "max_cache_size": 1000,
+        "additional_duration": 60,
+        "cleanup_interval": 5,
+        "history_refresh_interval": 3
+    },
+    "kafka": {
+        "brokers": ["localhost:29092"],
+        "audit_topic": "audit-logs",
+        "audit_group_id": "audit_consumer_group"
+    },
+    "grpc_server": {
+        "host": "localhost",
+        "port": "9001"
+    },
+    "logger": {
+        "level": "info",
+        "output_path": "stdout",
+        "encoding": "console",
+        "dev_mode": true
+    },
+    "jaeger": {
+        "otlp_endpoint": "localhost:4318",
+        "service_name": "pvz-app"
+    }
+}

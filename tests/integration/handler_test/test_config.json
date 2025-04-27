@@ -1,0 +1,28 @@
+{
+    "database": {
+        "user": "postgres",
+        "password": "postgres",
+        "host": "localhost",
+        "port": "5432",
+        "name": "orders_db_test"
+    },
+    "server": {
+        "host": "127.0.0.1",
+        "port": "9001",
+        "read_timeout": 5,
+        "write_timeout": 5,
+        "idle_timeout": 5,
+        "shutdown_timeout": 5
+    },
+   "cache_type": {
+        "name": "inmem",
+        "order_key_prefix": "order:",
+        "history_key_prefix": "history",
+        "order_ttl": 1440,
+        "history_ttl": 10,
+        "max_cache_size": 1000,
+        "additional_duration": 60,
+        "cleanup_interval": 5,
+        "history_refresh_interval": 3
+    }
+}

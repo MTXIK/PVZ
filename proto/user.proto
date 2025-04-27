@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "gitlab.ozon.dev/gojhw1/pkg/gen;pb";
+
+// Сервис для работы с пользователями
+service UserRPCHandler {
+  // Создание нового пользователя
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+  
+  // Получение информации о пользователе по ID
+  rpc GetUser(GetUserRequest) returns (User) {}
+  
+  // Получение списка пользователей с возможностью поиска
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+  
+  // Обновление информации о пользователе
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+  
+  // Обновление пароля пользователя
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse) {}
+  
+  // Удаление пользователя
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+}
+
+// Запрос на создание пользователя
+message CreateUserRequest {
+  string username = 1;
+  string password = 2;
+  string role = 3; // Если не указано, используется "user"
+}
+
+// Ответ на запрос создания пользователя
+message CreateUserResponse {
+  string message = 1;
+}
+
+// Запрос на получение пользователя по ID
+message GetUserRequest {
+  int64 id = 1;
+}
+
+// Модель пользователя
+message User {
+  int64 id = 1;
+  string username = 2;
+  string role = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+// Запрос на получение списка пользователей
+message ListUsersRequest {
+  string search_term = 1; // необязательное поле для поиска
+}
+
+// Ответ со списком пользователей
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
+}
+
+// Запрос на обновление пользователя
+message UpdateUserRequest {
+  int64 id = 1;
+  string username = 2;
+  string role = 3;
+}
+
+// Ответ на запрос обновления пользователя
+message UpdateUserResponse {
+  string message = 1;
+}
+
+// Запрос на обновление пароля пользователя
+message UpdatePasswordRequest {
+  int64 id = 1;
+  string password = 2;
+}
+
+// Ответ на запрос обновления пароля
+message UpdatePasswordResponse {
+  string message = 1;
+}
+
+// Запрос на удаление пользователя
+message DeleteUserRequest {
+  int64 id = 1;
+}
+
+// Ответ на запрос удаления пользователя
+message DeleteUserResponse {
+  string message = 1;
+}
